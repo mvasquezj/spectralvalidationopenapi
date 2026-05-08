@@ -1,0 +1,194 @@
+openapi: '3.1.1'
+info:
+  title: API de ejemplo
+  description: "## Bienvenido a la API de ejemplo\n\n### Reglas de Oro:\n- Usar HTTPS siempre.\n- Los errores 409 devuelven un `BusinessError`.\n- El código 500 es para excepciones no controladas\n- El código 423 es para bloqueo por rate limit\n\nDisfruta la documentación.\n"
+  version: '2.0'
+  summary: "Ejemplo simple de una API Docs\n"
+  x-api-id: ejemplo-api
+servers:
+  - url: https://localhost:7176/
+paths:
+  /api/v2/todos:
+    get:
+      tags:
+        - Todo
+      summary: Get Todos
+      operationId: getTodos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TodoResponse'
+        '423':
+          description: Locked
+        '500':
+          description: Internal Server Error
+    post:
+      tags:
+        - Todo
+      summary: Add Todo
+      operationId: addTodo
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TodoRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+        '400':
+          description: "Errores de validación de entrada  \n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+        '409':
+          description: "Errores de validación de negocio posibles:  \n- **USER_EXISTS**: El usuario ya está en la base de datos.\n- **INVALID_EMAIL**: El formato del correo no es válido.\n"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BusinessError'
+        '423':
+          description: Locked
+        '500':
+          description: Internal Server Error
+  '/api/v2/todos/{code}':
+    parameters:
+      - name: code
+        in: path
+        required: true
+        schema:
+          type: string
+    get:
+      tags:
+        - Todo
+      summary: Get Todo by Code
+      operationId: getTodoByCode
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TodoResponse'
+        '404':
+          description: Todo not found 2
+        '423':
+          description: Locked
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    BusinessError:
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error Code
+        message:
+          type: string
+          description: Error Message
+      description: Error Business Object
+    Severity:
+      type: integer
+    TodoRequest:
+      required:
+        - title
+        - description
+        - priority
+      type: object
+      properties:
+        title:
+          type: string
+          description: Todo Title label
+        description:
+          type: string
+          description: Todo Description
+        priority:
+          pattern: '^-?(?:0|[1-9]\d*)$'
+          type:
+            - integer
+            - string
+          description: 'Deprecado: Todo Priority, No usar en v2'
+          format: int32
+      description: Todo Request example label
+    TodoResponse:
+      required:
+        - id
+        - title
+        - description
+        - priority
+      type: object
+      properties:
+        id:
+          type: string
+          description: Todo Id
+          format: uuid
+        title:
+          type: string
+          description: Todo Title
+        description:
+          type: string
+          description: Todo Description
+        priority:
+          pattern: '^-?(?:0|[1-9]\d*)$'
+          type:
+            - integer
+            - string
+          description: Todo Priority
+          format: int32
+      description: Todo Response
+    ValidationFailure:
+      type: object
+      properties:
+        propertyName:
+          type:
+            - 'null'
+            - string
+        errorMessage:
+          type:
+            - 'null'
+            - string
+        attemptedValue: { }
+        customState: { }
+        severity:
+          $ref: '#/components/schemas/Severity'
+        errorCode:
+          type:
+            - 'null'
+            - string
+        formattedMessagePlaceholderValues:
+          type:
+            - 'null'
+            - object
+    ValidationResult:
+      type: object
+      properties:
+        isValid:
+          type: boolean
+        errors:
+          type:
+            - 'null'
+            - array
+          items:
+            $ref: '#/components/schemas/ValidationFailure'
+        ruleSetsExecuted:
+          type:
+            - 'null'
+            - array
+          items:
+            type: string
+tags:
+  - name: Todo
