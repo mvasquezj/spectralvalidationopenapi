@@ -1,0 +1,30 @@
+name: Validación de Especificaciones OpenAPI con Spectral (Solo Url)
+
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  governance-apis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '26' # Define una versión LTS estable
+
+      - name: Instalar y Ejecutar Spectral Linter
+        run: |
+          npm install -g @stoplight/spectral-cli
+          spectral lint api-specs/openapi.yaml -r .spectral.json
