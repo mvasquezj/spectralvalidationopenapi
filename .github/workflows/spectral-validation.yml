@@ -19,6 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '26' # Define una versión LTS estable
+          cache: 'npm'       # Acelera futuras descargas de Spectral
+
       - name: Instalar y Ejecutar Spectral Linter
         run: |
           npm install -g @stoplight/spectral-cli
