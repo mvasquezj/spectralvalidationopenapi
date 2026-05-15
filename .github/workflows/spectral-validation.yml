@@ -19,8 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Ejecutar Spectral Linter
-        uses: stoplightio/spectral-action@latest
-        with:
-          file_glob: '/api-specs/openapi.yaml' # Ruta a tu archivo OpenAPI
-          spectral_ruleset: '.url.json' # Tu archivo local de reglas corporativas
+      - name: Instalar y Ejecutar Spectral Linter
+        run: |
+          npm install -g @stoplight/spectral-cli
+          spectral lint /api-specs/openapi.yaml -r .spectral.json --fail-on-severity=error
