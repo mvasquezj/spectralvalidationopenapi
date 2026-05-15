@@ -27,4 +27,4 @@ jobs:
       - name: Instalar y Ejecutar Spectral Linter
         run: |
           npm install -g @stoplight/spectral-cli
-          spectral lint /api-specs/openapi.yaml -r .spectral.json --fail-on-severity=error
+          spectral lint api-specs/openapi.yaml -r .spectral.json
