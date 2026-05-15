@@ -1,0 +1,26 @@
+name: Validación de Especificaciones OpenAPI con Spectral
+
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  governance-apis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Ejecutar Spectral Linter
+        uses: stoplightio/spectral-action@latest
+        with:
+          file_glob: '/api-specs/openapi.yaml' # Ruta a tu archivo OpenAPI
+          spectral_ruleset: '.spectral.json' # Tu archivo local de reglas corporativas

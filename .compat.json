@@ -1,6 +1,0 @@
-{
-  "extends": [
-    ".spectral.json",
-    ".owasp.json"
-  ]
-}
