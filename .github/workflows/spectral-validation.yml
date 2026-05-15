@@ -23,4 +23,4 @@ jobs:
         uses: stoplightio/spectral-action@latest
         with:
           file_glob: '/api-specs/openapi.yaml' # Ruta a tu archivo OpenAPI
-          spectral_ruleset: '.spectral.json' # Tu archivo local de reglas corporativas
+          spectral_ruleset: '.url.json' # Tu archivo local de reglas corporativas
